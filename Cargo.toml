@@ -1,18 +1,17 @@
 [package]
 name = "tictactoe-tui"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
+authors = ["alfin.syahruddin@icloud.com"]
+license = "MIT"
+description = "Terminal based Tic-Tac-Toe Game."
+readme = "README.md"
+homepage = "https://github.com/alfinsyahruddin/tictactoe-tui"
+repository = "https://github.com/alfinsyahruddin/tictactoe-tui"
+keywords = ["cli", "tui", "tictactoe"]
+categories = ["command-line-utilities"]
 
 [dependencies]
-color-eyre = "0.6.3"
 crossterm = "0.28.1"
 rand = "0.8.5"
 ratatui = "0.28.1"
-
-[[bin]]
-name = "tictactoe-tui"
-path = "src/main.rs"
-
-[[bin]]
-name = "tictactoe-cli"
-path = "src/tictactoe_cli.rs" 

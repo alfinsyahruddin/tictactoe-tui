@@ -1,90 +1,17 @@
-use core::fmt;
+use std::{cmp::max, cmp::min, collections::HashMap};
+
 use rand::seq::IteratorRandom;
-use std::{cmp::max, cmp::min, collections::HashMap, fmt::Display, vec};
 
-fn main() {
-    let tictactoe = TicTacToe {
-        board: vec![
-            Player::O,
-            Player::X,
-            Player::X,
-            //
-            Player::X,
-            Player::O,
-            Player::None,
-            //
-            Player::None,
-            Player::None,
-            Player::None,
-        ],
-    };
-    println!("{}", tictactoe);
-    println!("RESULT: {:?}", TicTacToe::get_game_result(&tictactoe.board));
-    println!(
-        "AVAILABLE: {:?}",
-        TicTacToe::get_available_moves(&tictactoe.board)
-    );
-    let mut nodes_map: HashMap<i32, Vec<i32>> = HashMap::new();
-    println!(
-        "BEST MOVE: {:?}",
-        TicTacToe::get_best_move(&tictactoe.board, Player::X, false, 0, &mut nodes_map)
-    );
-}
-
-const BOARD_SIZE: u16 = 3;
-
-#[derive(Debug, PartialEq, Clone)]
-pub enum Player {
-    X,
-    O,
-    None,
-}
-
-impl Player {
-    fn get_opponent(&self) -> Player {
-        match self {
-            Player::X => Player::O,
-            Player::O => Player::X,
-            Player::None => Player::None,
-        }
-    }
-
-    fn get_text(&self) -> String {
-        match self {
-            Player::X => "X".to_string(),
-            Player::O => "O".to_string(),
-            Player::None => " ".to_string(),
-        }
-    }
-}
-
-type Board = Vec<Player>;
-
-#[derive(Debug, PartialEq)]
-pub enum GameResult {
-    Playing,
-    Win(Player),
-    Draw,
-}
+use crate::{
+    constants::BOARD_SIZE,
+    entities::{Board, GameResult, Player},
+};
 
 #[derive(Debug)]
-pub struct TicTacToe {
-    pub board: Board,
-}
+pub struct TicTacToe {}
 
 impl TicTacToe {
-    pub fn new() -> Self {
-        TicTacToe {
-            board: TicTacToe::get_empty_board(),
-        }
-    }
-
-    fn get_empty_board() -> Board {
-        let size = BOARD_SIZE * BOARD_SIZE;
-        (0..size).into_iter().map(|_| Player::None).collect()
-    }
-
-    fn get_best_move(
+    pub fn get_best_move(
         board: &Board,
         player: Player,
         is_maximizing: bool,
@@ -210,7 +137,7 @@ impl TicTacToe {
         return 0;
     }
 
-    fn get_available_moves(board: &Board) -> Vec<usize> {
+    pub fn get_available_moves(board: &Board) -> Vec<usize> {
         board
             .iter()
             .enumerate()
@@ -219,7 +146,7 @@ impl TicTacToe {
             .collect::<Vec<usize>>()
     }
 
-    fn get_game_result(board: &Board) -> GameResult {
+    pub fn get_game_result(board: &Board) -> GameResult {
         if TicTacToe::is_empty(&board) {
             return GameResult::Playing;
         }
@@ -271,7 +198,12 @@ impl TicTacToe {
         GameResult::Playing
     }
 
-    fn is_empty(board: &Board) -> bool {
+    pub fn get_empty_board() -> Board {
+        let size = BOARD_SIZE * BOARD_SIZE;
+        (0..size).into_iter().map(|_| Player::None).collect()
+    }
+
+    pub fn is_empty(board: &Board) -> bool {
         let count: usize = board
             .iter()
             .map(|x| x != &Player::None)
@@ -281,7 +213,7 @@ impl TicTacToe {
         count == 0
     }
 
-    fn is_full(board: &Board) -> bool {
+    pub fn is_full(board: &Board) -> bool {
         let count: usize = board
             .iter()
             .map(|x| x == &Player::None)
@@ -289,21 +221,5 @@ impl TicTacToe {
             .collect::<Vec<bool>>()
             .len();
         count == 0
-    }
-}
-
-impl Display for TicTacToe {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut content = "".to_string();
-        for row in 0..BOARD_SIZE {
-            for col in 0..BOARD_SIZE {
-                let index = (row * BOARD_SIZE) + col;
-                let player = &self.board[index as usize];
-                content += format!("{}", player.get_text()).as_str();
-            }
-            content += "\n";
-        }
-
-        writeln!(f, "{}", content)
     }
 }
